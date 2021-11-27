@@ -1,4 +1,7 @@
-Simplelang (SL) consists of simple parts:
+Simplelang (SLG) is my small esolang.
+I made it as a little rust project since I have started to learn rust recently.
+
+Simplelang consists of simple parts:
     - FUNCTIONS
     - VARIABLES
     - KEY WORDS
