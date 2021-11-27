@@ -11,6 +11,7 @@ DEL &tmp_b
 RET &tmp_a
 #end_of_declaration
 
+// UNIMPLEMENTED
 #declare_and_skip &Divide_ab
 &tmp_a &a
 &tmp_b &b
@@ -23,4 +24,14 @@ ADD &tmp_a &tmp_b
 RET &tmp_a
 #end_of_declaration
 
+// Multiply &a by &b and write the result to a &c
+// Then delete &Multiply_ab (for clear output)
+// And print every variable
+&a 9
+&b 3
+CALL &Multiply_ab
+&c 0
+POP &c
+
+DEL &Multiply_ab
 #print_declarated_variables
