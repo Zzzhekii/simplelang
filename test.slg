@@ -26,12 +26,17 @@ RET &tmp_a
 
 // Multiply &a by &b and write the result to a &c
 // Then delete &Multiply_ab (for clear output)
-// And print every variable
-&a 9
-&b 3
+// And print &c
+&a 0
+&b 0
+INP &a
+INP &b
+ADD &a -48
+ADD &b -48
+
 CALL &Multiply_ab
 &c 0
 POP &c
 
-DEL &Multiply_ab
-#print_declarated_variables
+ADD &c 48
+PRT &c

@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::env;
 use std::fs;
+use std::io;
 
 fn main() {
     let arguments: Vec<String> = env::args().collect();
@@ -75,18 +76,35 @@ fn run(source: &str) -> Result<(), String> {
 
                     print!("{}", to_ascii(arg1));
                 },
-                "INP" => (),
-                "ADD" => {
-                    if split_item.len() != 3 { return Err(format!("Error: ADD requires 2 arguments:\n{}: {}", iterator, item)) }
-                    if !is_variable_unwrap(split_item[1]) || split_item[1].len() < 2 { return Err(format!(
-                                "Error: ADD's first argument must be a variable:\n{}: {}", iterator, item))}
+                "INP" => {
+                    if split_item.len() != 2 { return Err(format!("Error: INP requires 2 arguments:\n{}: {}", iterator, item)) }
+                    if is_variable_unwrap(split_item[1]) {
 
-                    let arg1 = match get_argument_value(split_item[1], &variables, iterator) { Ok(s) => s, Err(e) =>
-                        return Err(format!("{}:\n{}: {}", e, iterator, item)) };
-                    let arg2 = match get_argument_value(split_item[2], &variables, iterator) { Ok(s) => s, Err(e) =>
-                        return Err(format!("{}:\n{}: {}", e, iterator, item)) };
-                    variables.remove(split_item[1]);
-                    variables.insert(split_item[1], arg1 + arg2);
+                        let mut input: String = String::new();
+                        io::stdin().read_line(&mut input).expect("Couldn't read user input");
+                        let input = input.as_str().chars().next();
+
+                        if !variables.contains_key(split_item[1]) {
+                            return Err(format!("Error: \"{}\" variable doesn't exist:\n{}: {}", split_item[1], iterator, item))
+                        }
+
+                        if let Some(s) = input {
+                            variables.remove(split_item[1]);
+                            variables.insert(split_item[1], s as u8 as i32);
+                        }
+                    }
+                },
+                    "ADD" => {
+                        if split_item.len() != 3 { return Err(format!("Error: ADD requires 2 arguments:\n{}: {}", iterator, item)) }
+                        if !is_variable_unwrap(split_item[1]) || split_item[1].len() < 2 { return Err(format!(
+                                    "Error: ADD's first argument must be a variable:\n{}: {}", iterator, item))}
+
+                        let arg1 = match get_argument_value(split_item[1], &variables, iterator) { Ok(s) => s, Err(e) =>
+                            return Err(format!("{}:\n{}: {}", e, iterator, item)) };
+                        let arg2 = match get_argument_value(split_item[2], &variables, iterator) { Ok(s) => s, Err(e) =>
+                            return Err(format!("{}:\n{}: {}", e, iterator, item)) };
+                        variables.remove(split_item[1]);
+                        variables.insert(split_item[1], arg1 + arg2);
                 },
                 "JMP" => {
                     if split_item.len() != 3 { return Err(format!("Error: JMP requires 2 arguments:\n{}: {}", iterator, item)) }
