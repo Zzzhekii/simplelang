@@ -12,6 +12,7 @@ _I've made it as a little rust project since I've started to learn rust recently
     - The stack
     - Hashmap of variables
     - An ability to execute SLG code
+    - String buffer
 
 ### Key words:
 ```
@@ -36,6 +37,8 @@ POP &variable               - Moves last integer from the stack to &variable
                                 (If argument was a variable, otherwise POP will only remove last number)
                             - Removes last number from stack
 PUSH 0                  Pushes any number to the stack
+BUF &variable 0         Saves string buffer's value on [2nd argument] index to the &variable
+RBUF                    Reverses string buffer
 ```
 
 ### Variables:
@@ -47,11 +50,14 @@ PUSH 0                  Pushes any number to the stack
 #### Variables can be redeclared anytime
 ##### Any variable can be accessed from every part of the code after it was declarated unless it was deleted.
 
-### Additional functions:
+### Additional commands:
 ```
 #declare_and_skip &variable         Declare variable pointing at %HERE&+1 and skip to next line that contains
 #end_of_declaration                 End of declaration
 #print_declarated_variables         Print list of declarated variables and it's values
+
+#input_to_buffer &variable          Get user input; save length-1 to the &variable; 
+                                        - Save input to the string buffer
 ```
 
 # Example code:

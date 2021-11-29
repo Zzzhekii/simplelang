@@ -11,26 +11,53 @@ DEL &tmp_b
 RET &tmp_a
 #end_of_declaration
 
-// UNIMPLEMENTED
-#declare_and_skip &Divide_ab
-&tmp_a &a
-&tmp_b &b
-
-&tmp_jmp %HERE%
-ADD &tmp_a 
-JMP &tmp_a &tmp_jmp
-ADD &tmp_a &tmp_b
-
-RET &tmp_a
-#end_of_declaration
-
 // Multiply &a by &b and write the result to a &c
 // Then delete &Multiply_ab (for clear output)
 // And print &c
+
+&first_number 0
+&second_number 0
+
+// Get the 1 number
+#input_to_buffer &size
+RBUF
+&jmp_tmp %HERE%
+
 &a 0
-&b 0
-INP &a
-INP &b
+BUF &a &size
+ADD &a -48
+ADD &first_number &a
+&a &first_number
+&b 10
+CALL &Multiply_ab
+&c 0
+POP &c
+&first_number &c
+
+ADD &size -1
+JMP &size &jmp_tmp
+
+// Get the 1 number
+#input_to_buffer &size
+RBUF
+&jmp_tmp %HERE%
+
+&a 0
+BUF &a &size
+ADD &a -48
+ADD &second_number &a
+&a &second_number
+&b 10
+CALL &Multiply_ab
+&c 0
+POP &c
+&second_number &c
+
+ADD &size -1
+JMP &size &jmp_tmp
+
+#print_declarated_variables
+
 ADD &a -48
 ADD &b -48
 

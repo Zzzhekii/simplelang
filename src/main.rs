@@ -26,6 +26,7 @@ fn main() {
 fn run(source: &str) -> Result<(), String> {
     let mut variables: HashMap<&str, i32> = HashMap::new();
     let mut stack: Vec<i32> = Vec::new();
+    let mut string_buffer: Vec<i32> = Vec::new();
 
     let program: Vec<&str> = source.lines().collect();
     let mut iterator = 0;
@@ -81,7 +82,8 @@ fn run(source: &str) -> Result<(), String> {
                     if is_variable_unwrap(split_item[1]) {
 
                         let mut input: String = String::new();
-                        io::stdin().read_line(&mut input).expect("Couldn't read user input");
+                        io::stdin().read_line(&mut input)
+                            .expect("Couldn't read user input");
                         let input = input.as_str().chars().next();
 
                         if !variables.contains_key(split_item[1]) {
@@ -189,6 +191,24 @@ fn run(source: &str) -> Result<(), String> {
                     variables.insert(arg1, match get_argument_value(split_item[1], &variables, iterator) { Ok(s) => s, Err(e) =>
                         return Err(format!("{}:\n{}: {}", e, iterator, item)) });
                 },
+                "BUF" => {
+                    if split_item.len() != 3 { return Err(format!("Error: BUF requires 2 argument:\n{}:{}", iterator, item)) }
+
+                    let arg1 = split_item[1];
+                    if !is_variable_unwrap(arg1) { return Err(format!("Error: BUF's first argument must be a variable:\n{}: {}", iterator, item)) }
+                    if !variables.contains_key(arg1) { return Err(format!("Variable must be declarated:\n{}: {}", iterator, item)) }
+
+                    let arg2 = match get_argument_value(split_item[2], &variables, iterator) { Ok(s) => s, Err(e) =>
+                        return Err(format!("{}:\n{}", e, item)) };
+
+                    variables.remove(arg1);
+                    variables.insert(arg1, string_buffer[arg2 as usize]);
+                },
+                "RBUF" => {
+                    if split_item.len() != 1 { return Err(format!("Error: RBUF doesn't require any arguments:\n{}:{}", iterator, item)) }
+
+                    string_buffer.reverse();
+                }
 
                 "#declare_and_skip" => {
                     if split_item.len() != 2 { return Err(format!("Error: #declare_and_skip requires 1 argument:\n{}: {}", iterator, item)) }
@@ -213,6 +233,28 @@ fn run(source: &str) -> Result<(), String> {
                     if split_item.len() != 1 { return Err(format!("Error: command doesn't require any arguments:\n{}: {}", iterator, item)) }
                     println!("{:?}", variables);
                 },
+                "#input_to_buffer" => {
+                    let arg1 = split_item[1];
+                    if !is_variable_unwrap(arg1) { return Err(format!("Error: #input_to_buffer's first argument must be a variable:\n{}: {}", iterator, item)) }
+                    if variables.contains_key(arg1) { variables.remove(arg1); }
+    
+                    let mut input: String = String::new();
+                    io::stdin().read_line(&mut input)
+                        .expect("Couldn't read user input");
+
+                    let input_len = input.len()-1;
+                    let input: Vec<char> = input
+                        .as_str()
+                        .chars()
+                        .collect();
+
+                    variables.insert(arg1, input_len as i32);
+
+                    string_buffer = Vec::new();
+                    for item in input {
+                        string_buffer.push(item as i32);
+                    }
+                }
                 _ => ()
             };
         }
