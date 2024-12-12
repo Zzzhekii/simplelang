@@ -1,4 +1,5 @@
 # Simplelang (SLG) is my small esolang.
+_This was a project I made when I was thirteen..._
 _I've made it as a little rust project since I've started to learn rust recently._
 
 ##### Every variable and value in SLG are i32 (from -2147483648 to 2147483647)
